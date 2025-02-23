@@ -182,22 +182,10 @@ include("../config/config.php");
                                 <a href="<?= URL_WEB?>/views/listaRoles.php"><i class="ik ik-lock"></i><span>Roles</span></a>
                             </div>
                             <div class="nav-item">
-                                <a href="<?= URL_WEB?>/views/"><i class="fas fa-plus"></i><span>Registrar Equipos</span> <span
+                                <a href="<?= URL_WEB?>/views/usuarios.php"><i class="ik ik-user"></i><span>Usuarios</span> <span
                                         class="badge badge-success"></span></a>
                             </div>
-                            <div class="nav-item">
-                                <a href="clientes.php"><i class="fas fa-user"></i><span>Clientes</span> <span
-                                        class="badge badge-success"></span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="equipos.php"><i class="fas fa-laptop"></i><span>Equipos</span> <span
-                                        class="badge badge-success"></span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="roles/"><i class="fas fa-user-cog"></i>
-                                    <span>Roles</span> <span
-                                        class="badge badge-success"></span></a>
-                            </div>
+                            
                             <!-- <div class="nav-item has-sub">
                                 <a href="javascript:void(0)"><i class="ik ik-layers"></i><span>Widgets</span> <span
                                         class="badge badge-danger">150+</span></a>

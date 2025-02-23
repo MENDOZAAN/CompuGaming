@@ -88,11 +88,14 @@ require_once("../controllers/RolController.php");
                                         <td><?= date("d/m/Y H:i:s", strtotime($rol['fecha_creacion'])); ?></td>
                                         <td>
                                             <div style="display: flex; gap: 20px;">
-                                                <a href="editar.php?id=<?= $rol['id']; ?>">
+                                                <!-- Botón Editar -->
+                                                <a href="#" class="editarRolBtn" data-id="<?= $rol['id']; ?>" data-nombre="<?= $rol['nombre']; ?>">
                                                     <i class="ik ik-edit"></i>
                                                 </a>
-                                                <a href="eliminar.php?id=<?= $rol['id']; ?>">
-                                                    <i class="ik ik-trash"></i>
+
+                                                <!-- Botón Eliminar con modal -->
+                                                <a href="#" class="eliminarRolBtn" data-id="<?= $rol['id']; ?>">
+                                                    <i class="ik ik-trash" style="color: red;"></i>
                                                 </a>
                                             </div>
                                         </td>
@@ -109,6 +112,53 @@ require_once("../controllers/RolController.php");
             </div>
         </div>
     </div>
+    <!-- modal editar rol -->
+    <div class="modal fade" id="editarRolModal" tabindex="-1" role="dialog" aria-labelledby="editarRolLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarRolLabel">Editar Rol</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarRolForm">
+                        <input type="hidden" id="rolId" name="id">
+                        <div class="form-group">
+                            <label for="nombreRolEditar">Nombre del Rol</label>
+                            <input type="text" class="form-control" id="nombreRolEditar" name="nombre" required>
+                        </div>
+                        <button type="submit" class="btn" style="background-color: #343a40; border-color: #343a40; color: white;">
+                            Guardar Cambios
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal de Confirmación para Eliminar -->
+    <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" role="dialog" aria-labelledby="confirmarEliminarLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar este rol?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #6c757d; color: white;" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <!-- Script de búsqueda en tiempo real -->
     <script>
@@ -126,6 +176,91 @@ require_once("../controllers/RolController.php");
             });
         });
     </script>
+    <!-- Script de agregar rol con AJAX -->
+    <script>
+        $(document).ready(function() {
+            $("#agregarRolForm").submit(function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: "../controllers/agregar_rol.php",
+                    data: $(this).serialize(),
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <!-- script para editar rol -->
+    <script>
+        $(document).ready(function() {
+            $(".editarRolBtn").click(function() {
+                var rolId = $(this).data("id");
+                var nombreRol = $(this).data("nombre");
+
+                $("#rolId").val(rolId);
+                $("#nombreRolEditar").val(nombreRol);
+
+                $("#editarRolModal").modal("show");
+            });
+
+            $("#editarRolForm").submit(function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: "../controllers/editar_rol.php",
+                    data: $(this).serialize(),
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    },
+                    error: function() {
+                        alert("Error en la petición AJAX");
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- script eliminar rol -->
+    <script>
+        $(document).ready(function() {
+            let rolIdEliminar = null;
+
+            $(".eliminarRolBtn").click(function() {
+                rolIdEliminar = $(this).data("id"); 
+                $("#confirmarEliminarModal").modal("show"); 
+            });
+
+            $("#confirmarEliminarBtn").click(function() {
+                if (rolIdEliminar) {
+                    $.ajax({
+                        type: "POST",
+                        url: "../controllers/eliminar_rol.php",
+                        data: {
+                            id: rolIdEliminar
+                        },
+                        success: function(response) {
+                            $("#confirmarEliminarModal").modal("hide");
+                            location.reload(); 
+                        },
+                        error: function() {
+                            alert("Error al eliminar el rol.");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>
