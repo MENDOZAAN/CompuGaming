@@ -62,6 +62,76 @@ require_once "../controllers/listar_usuarios.php";
                     </table>
                 </div>
             </div>
+            <!-- MODAL PARA AGREGAR USUARIO -->
+            <div class="modal fade" id="agregarUsuarioModal" tabindex="-1" aria-labelledby="agregarUsuarioLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-dark text-white">
+                            <h5 class="modal-title" id="agregarUsuarioLabel">
+                                <i class="ik ik-user-plus"></i> Agregar Nuevo Usuario
+                            </h5>
+                        </div>
+                        <div class="modal-body">
+                            <form id="agregarUsuarioForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="nombre" class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="apellido" class="form-label">Apellido</label>
+                                            <input type="text" class="form-control" id="apellido" name="apellido" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="nombre_usuario" class="form-label">Usuario</label>
+                                    <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="rol" class="form-label">Rol</label>
+                                            <select class="form-control" id="rol" name="rol" required>
+                                                <option value="">Seleccione un rol</option>
+                                                <option value="Administrador">Administrador</option>
+                                                <option value="Técnico">Técnico</option>
+                                                <option value="Usuario">Usuario</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="estado" class="form-label">Estado</label>
+                                            <select class="form-control" id="estado" name="estado" required>
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-dark">
+                                        <i class="ik ik-save"></i> Guardar Usuario
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 

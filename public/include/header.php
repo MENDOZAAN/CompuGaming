@@ -148,7 +148,7 @@ include("../config/config.php");
                                         class="ik ik-mail dropdown-icon"></i> Inbox</a>
                                 <a class="dropdown-item" href="#"><i class="ik ik-navigation dropdown-icon"></i>
                                     Message</a>
-                                <a class="dropdown-item" href="<?= URL_WEB ?>/php/cerrar_sesion.php"><i
+                                <a class="dropdown-item" href="/compugaming/logout"><i
                                         class="ik ik-power dropdown-icon"></i> Logout</a>
                             </div>
                         </div>

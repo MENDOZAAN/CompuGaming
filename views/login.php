@@ -23,8 +23,8 @@ unset($_SESSION['error']);
         </div>
     <?php endif; ?>
 
-    <form action="../controllers/LoginController.php" method="POST">
-        <div class="mb-3">
+    <form action="/compugaming/auth/login" method="POST">
+    <div class="mb-3">
             <label for="nombre_usuario" class="form-label">Usuario</label>
             <input type="text" class="form-control" name="nombre_usuario" id="nombre_usuario" required>
         </div>

@@ -3,6 +3,6 @@ session_start();
 session_unset();  // Elimina todas las variables de sesión
 session_destroy(); // Destruye la sesión
 
-header("Location: ../views/login.php");
+header("Location: ../compugaming/login");
 exit();
 ?>
