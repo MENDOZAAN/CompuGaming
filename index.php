@@ -1,4 +1,4 @@
 <?php
-header("Location: views/login.php");
+header("Location: /compugaming/auth/login");
 exit;
 ?>

@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // Obtiene la ruta desde la URL
 $request = $_SERVER['REQUEST_URI'];
