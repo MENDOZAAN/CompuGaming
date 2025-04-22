@@ -1,22 +1,4 @@
-# Habilita RewriteEngine
 RewriteEngine On
-
-# Base del proyecto (ajusta si es necesario)
-RewriteBase /compugaming/
-
-# Redirige la raíz a la vista de login
-RewriteRule ^$ views/login.php [L]
-
-# Redirige '/login' a la vista de login
-RewriteRule ^login$ views/login.php [L]
-
-# Ruta para cerrar sesión
-RewriteRule ^logout$ controllers/LogoutController.php [L]
-
-# Ruta para listar roles
-
-
-# Redirige todas las demás solicitudes al router.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.+)$ routes/router.php?url=$1 [QSA,L]
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

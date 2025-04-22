@@ -1,38 +1,31 @@
 <?php
-session_start();
-require '../config/db.php';
+require_once '../models/UserModel.php';
+include_once '../config/config.php';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $nombre_usuario = trim($_POST['nombre_usuario'] ?? '');
-    $password = trim($_POST['password'] ?? '');
 
-    // Validación: Evitar que los campos estén vacíos
-    if (empty($nombre_usuario) || empty($password)) {
-        $_SESSION['error'] = "Todos los campos son obligatorios.";
-        header("Location: /compugaming/login");
-        exit();
+
+class LoginController {
+    public function index() {
+        require_once 'views/login/index.php';
     }
 
-    // Consulta segura
-    $stmt = $pdo->prepare("SELECT id, nombre, apellido, password, estado FROM usuarios WHERE nombre_usuario = ?");
-    $stmt->execute([$nombre_usuario]);
-    $usuario = $stmt->fetch();
+    public function autenticar() {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
 
-    // Verificar credenciales
-    if ($usuario && password_verify($password, $usuario['password'])) {
-        if ($usuario['estado']) {
-            $_SESSION['usuario_id'] = $usuario['id'];
-            $_SESSION['usuario_nombre'] = $usuario['nombre'] . " " . $usuario['apellido'];
-            header("Location: /compugaming/index"); // Redirige al panel principal
-            exit();
+        $usuario = UserModel::getByUsername($username);
+
+        if ($usuario && password_verify($password, $usuario['password'])) {
+            if ($usuario['estado'] == 1) {
+                session_start();
+                $_SESSION['usuario'] = $usuario;
+                header("Location: " . URL_WEB . "/admin/index.php");
+                exit;
+            } else {
+                echo "Cuenta inactiva.";
+            }
         } else {
-            $_SESSION['error'] = "Tu cuenta está desactivada.";
+            echo "Credenciales incorrectas.";
         }
-    } else {
-        $_SESSION['error'] = "Usuario o contraseña incorrectos.";
     }
-
-    header("Location: /compugaming/login");
-    exit();
 }
-?>
