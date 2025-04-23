@@ -3,7 +3,8 @@
 date_default_timezone_set('America/Lima');
 
 // Ruta base del proyecto (ajusta si estás en subcarpeta)
-define('URL_WEB', 'http://localhost/CompuGaming');
+define('BASE_URL', 'http://localhost/CompuGaming');
+
 
 // Nombre del sistema
 define('NAME_WEB', 'Compu Gaming');
@@ -12,7 +13,7 @@ define('NAME_WEB', 'Compu Gaming');
 define('FECHA_HOY', date('d/m/Y'));
 define('HORA_ACTUAL', date('H:i:s'));
 
-define('LOGO_ROJO', URL_WEB . '/assets/img/logo_rojo.png');
-define('LOGO_BLANCO', URL_WEB . '/assets/img/logo_blanco.png');
+define('LOGO_ROJO', BASE_URL . '/assets/img/logo_rojo.png');
+define('LOGO_BLANCO', BASE_URL . '/assets/img/logo_blanco.png');
 
 
