@@ -87,6 +87,7 @@
                                 <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-user"></i><span>Usuarios</span> <span
                                         class="badge badge-success"></span></a>
                             </div>
+                            git checkout -b nico
                             <!-- <div class="nav-item ">
                                 <a href="<?= BASE_URL ?>/views/listaRoles.php"><i class="ik ik-lock"></i><span>Roles</span></a>
                             </div>
