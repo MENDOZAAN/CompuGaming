@@ -1,9 +1,11 @@
 <?php
+require_once __DIR__ . '/../../config/config.php'; // se carga UNA vez
 session_start();
+
 if (!isset($_SESSION['usuario'])) {
-    header('Location: http://localhost/CompuGaming/login');
+    header('Location: ' . BASE_URL . '/login');
     exit;
 }
-?>
 
-<h2>Bienvenido al Panel de Administración, <?= $_SESSION['usuario']['nombre'] ?></h2>
+include __DIR__ . '/../../includes/header.php';
+?>

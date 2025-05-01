@@ -13,7 +13,5 @@ define('NAME_WEB', 'Compu Gaming');
 define('FECHA_HOY', date('d/m/Y'));
 define('HORA_ACTUAL', date('H:i:s'));
 
-define('LOGO_ROJO', BASE_URL . '/assets/img/logo_rojo.png');
-define('LOGO_BLANCO', BASE_URL . '/assets/img/logo_blanco.png');
 
 
