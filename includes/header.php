@@ -65,7 +65,7 @@
         <div class="page-wrap">
             <div class="app-sidebar colored">
                 <div class="sidebar-header">
-                    <a class="header-brand" href="index.php">
+                    <a class="header-brand" href="">
                         <div class="logo-img">
                             <img src="<?= BASE_URL ?>/assets/img/Logo grande blanco.png" class="header-brand-img"
                                 style="width: 110px; height: auto;margin-left: 50px;">
