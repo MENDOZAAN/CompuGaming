@@ -10,3 +10,5 @@
 | **Historial de atención**        | Admin, Técnico      | Ver todo el historial de soporte por cliente o equipo            |
 | **Reportes**                     | Admin               | Ver reportes por mes, técnico, estado, etc. (exportar PDF/Excel) |
 | **Página pública de consulta**   | Cliente             | Consultar estado del equipo con DNI o código                     |
+
+mass
