@@ -1,5 +1,10 @@
 Array
 (
-    [accion] => eliminar
-    [id] => 7
+    [nombre] => dsdd
+    [apellido] => Mendoza Atenc
+    [nombre_usuario] => dfsdf44t56
+    [password] => 324343545454
+    [rol] => Admin
+    [estado] => 1
+    [accion] => crear
 )
