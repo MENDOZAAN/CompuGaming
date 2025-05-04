@@ -1,10 +1,10 @@
 Array
 (
-    [nombre] => dsdd
-    [apellido] => Mendoza Atenc
-    [nombre_usuario] => dfsdf44t56
-    [password] => 324343545454
-    [rol] => Admin
+    [nombre] => Nico
+    [apellido] => Mendoza Atencio
+    [nombre_usuario] => dsd
+    [password] => dsd
+    [rol] => Usuario
     [estado] => 1
     [accion] => crear
 )
