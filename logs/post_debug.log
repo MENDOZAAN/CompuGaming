@@ -1,10 +1,10 @@
 Array
 (
-    [nombre] => Nico
-    [apellido] => Mendoza Atencio
-    [nombre_usuario] => dsd
-    [password] => dsd
-    [rol] => Usuario
+    [nombre] => admin2
+    [apellido] => admin2
+    [nombre_usuario] => admin2
+    [password] => admin2
+    [rol] => Admin
     [estado] => 1
     [accion] => crear
 )

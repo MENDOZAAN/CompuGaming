@@ -80,15 +80,11 @@
                         <nav id="main-menu-navigation" class="navigation-main">
                             <div class="nav-lavel">Navegación</div>
 
+                            <!-- Visible para todos (Admin y Usuario) -->
                             <div class="nav-item">
                                 <a href="<?= BASE_URL ?>/views/admin"><i class="ik ik-bar-chart-2"></i><span>Dashboard</span></a>
                             </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/usuario.php"><i class="ik ik-users"></i><span>Usuarios</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-shield"></i><span>Roles / Permisos</span></a>
-                            </div>
+
                             <div class="nav-item">
                                 <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-user-check"></i><span>Clientes</span></a>
                             </div>
@@ -102,19 +98,29 @@
                                 <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-file-text"></i><span>Guía de ingreso/salida</span></a>
                             </div>
                             <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-clock"></i><span>Historial de atención</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-pie-chart"></i><span>Reportes</span></a>
-                            </div>
-                            <div class="nav-item">
                                 <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-globe"></i><span>Página pública de consulta</span></a>
                             </div>
-                        </nav>
 
+                            <!-- Solo para rol Admin -->
+                            <?php if ($_SESSION['usuario']['rol'] === 'Admin'): ?>
+                                <div class="nav-item">
+                                    <a href="<?= BASE_URL ?>/views/admin/usuario.php"><i class="ik ik-users"></i><span>Usuarios</span></a>
+                                </div>
+                                <div class="nav-item">
+                                    <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-shield"></i><span>Roles / Permisos</span></a>
+                                </div>
+                                <div class="nav-item">
+                                    <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-clock"></i><span>Historial de atención</span></a>
+                                </div>
+                                <div class="nav-item">
+                                    <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-pie-chart"></i><span>Reportes</span></a>
+                                </div>
+                            <?php endif; ?>
+                        </nav>
                     </div>
+
                 </div>
-            </div>          
+            </div>
 
 
             <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
