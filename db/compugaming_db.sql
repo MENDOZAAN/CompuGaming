@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-05-2025 a las 20:00:48
+-- Tiempo de generación: 05-05-2025 a las 02:17:32
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,21 +24,97 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `roles`
+-- Estructura de tabla para la tabla `clientes`
 --
 
-CREATE TABLE `roles` (
+CREATE TABLE `clientes` (
   `id` int(11) NOT NULL,
-  `nombre` varchar(50) NOT NULL
+  `tipo_doc` enum('DNI','RUC') NOT NULL,
+  `dni_ruc` varchar(15) NOT NULL,
+  `nombres` varchar(100) DEFAULT NULL,
+  `apellidos` varchar(100) DEFAULT NULL,
+  `razon_social` varchar(150) DEFAULT NULL,
+  `direccion` text DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `correo` varchar(100) DEFAULT NULL,
+  `fecha_registro` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `roles`
+-- Volcado de datos para la tabla `clientes`
 --
 
-INSERT INTO `roles` (`id`, `nombre`) VALUES
-(1, 'Admin'),
-(2, 'Técnico');
+INSERT INTO `clientes` (`id`, `tipo_doc`, `dni_ruc`, `nombres`, `apellidos`, `razon_social`, `direccion`, `telefono`, `correo`, `fecha_registro`) VALUES
+(21, 'DNI', '04207303', 'JUAN', 'MENDOZA MIRAVAL', '', '', '9797979', '', '2025-05-04 16:53:50'),
+(22, 'RUC', '20604235694', '', '', 'COMPU GAMING STORE E.I.R.L.', 'CAL. --- MZA. I LOTE. 38 URB. LA ESTANCIA DE CARABAYLLO LIMA LIMA CARABAYLLO', '', '', '2025-05-04 16:59:07'),
+(23, 'RUC', '10712506810', '', '', 'MENDOZA ATENCIO NICO LIZANDRO', '', '', '', '2025-05-04 17:03:43'),
+(26, 'DNI', '71250681', 'NICO ', 'MENDOZA ', '', '', '979563045', '', '2025-05-04 17:39:28'),
+(28, 'RUC', '20601929563', '', '', 'CORP ERA-TEG EMPRESA INDIVIDUAL DE RESPONSABILIDAD LIMITADA - CORP ERA-TEG E.I.R.L.', 'CAL. REAL DE MINAS MZA. T LOTE. 13 CERCADO CHAUPIMARCA PASCO PASCO CHAUPIMARCA', '', '', '2025-05-04 17:50:55');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `equipos`
+--
+
+CREATE TABLE `equipos` (
+  `id` int(11) NOT NULL,
+  `cliente_id` int(11) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
+  `marca_id` int(11) NOT NULL,
+  `tipo_equipo` varchar(100) DEFAULT NULL,
+  `modelo` varchar(100) DEFAULT NULL,
+  `serie` varchar(100) DEFAULT NULL,
+  `accesorios` text DEFAULT NULL,
+  `falla_reportada` text DEFAULT NULL,
+  `diagnostico` text DEFAULT NULL,
+  `estado` enum('Recibido','En reparación','Terminado') DEFAULT 'Recibido',
+  `adelanto` decimal(10,2) DEFAULT 0.00,
+  `fecha_ingreso` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `marcas`
+--
+
+CREATE TABLE `marcas` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `marcas`
+--
+
+INSERT INTO `marcas` (`id`, `nombre`) VALUES
+(1, 'HP'),
+(2, 'Lenovo'),
+(3, 'Epson'),
+(4, 'Dell');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `servicios`
+--
+
+CREATE TABLE `servicios` (
+  `id` int(11) NOT NULL,
+  `descripcion` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `servicios`
+--
+
+INSERT INTO `servicios` (`id`, `descripcion`) VALUES
+(1, 'Limpieza de cabezal de impresora'),
+(2, 'Formateo y reinstalación de sistema operativo'),
+(3, 'Cambio de disco duro de PC'),
+(4, 'Mantenimiento general de laptop'),
+(5, 'Actualización de software');
 
 -- --------------------------------------------------------
 
@@ -62,20 +138,40 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `nombre_usuario`, `password`, `rol`, `fecha_creacion`, `estado`) VALUES
-(3, 'Bryan', 'Ramos', 'bryan', '$2y$10$90XswovQ98evJsgHvtIUr.fI9wHf9TD9Ic0LrCPaUFvV3xRl9irh6', 'Admin', '2025-04-23 04:14:16', 1),
 (4, 'Nico', 'Mendoza', 'admin', '$2y$10$vcKra/.yCoMwN88xRZFCfuTh2Iq60ooAPG8H5eKsOKc3ejmtrwAtu', 'Admin', '2025-04-29 01:45:58', 1),
-(6, 'Marlon', 'Canta', 'marlon', '$2y$10$ojTUV3v0gk30p6ImGnztmes4YLnqn6TOXmVoTl5P14EqitCqJXgUm', 'Admin', '2025-05-02 14:00:32', 1),
-(18, 'TEST', 'DS', 'test1', '$2y$10$CR09qH/WRnBxWUPjxZlITuylkWUXcta0ZBdLsqGgzyMDUqAG14952', 'Usuario', '2025-05-02 17:14:18', 1),
-(19, 'sd', 'dsd', 'dsd', '$2y$10$j0CI1bx4zMiCH4FP8lVrReik15RYcuKUjC7e629dq2UCSnI6C9QlC', 'Admin', '2025-05-02 23:49:15', 1);
+(6, 'Marlon', 'Canta', 'user', '$2y$10$xI9TkQEBh4pOIxPoxVVy9eQLoEYl2IP3DpBf/ge6kzT2XXkk0ODfW', 'Usuario', '2025-05-02 14:00:32', 1),
+(38, 'admin2', 'admin2', 'admin2', '$2y$10$2CAqIeNw.tMkczwiYlPgwebxxPSKrsGs2evB4FRLLa6US5j714v42', 'Admin', '2025-05-04 19:28:45', 1);
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `roles`
+-- Indices de la tabla `clientes`
 --
-ALTER TABLE `roles`
+ALTER TABLE `clientes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `dni_ruc` (`dni_ruc`);
+
+--
+-- Indices de la tabla `equipos`
+--
+ALTER TABLE `equipos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cliente_id` (`cliente_id`),
+  ADD KEY `usuario_id` (`usuario_id`),
+  ADD KEY `marca_id` (`marca_id`);
+
+--
+-- Indices de la tabla `marcas`
+--
+ALTER TABLE `marcas`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `servicios`
+--
+ALTER TABLE `servicios`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -90,16 +186,46 @@ ALTER TABLE `usuarios`
 --
 
 --
--- AUTO_INCREMENT de la tabla `roles`
+-- AUTO_INCREMENT de la tabla `clientes`
 --
-ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `clientes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT de la tabla `equipos`
+--
+ALTER TABLE `equipos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `marcas`
+--
+ALTER TABLE `marcas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `servicios`
+--
+ALTER TABLE `servicios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `equipos`
+--
+ALTER TABLE `equipos`
+  ADD CONSTRAINT `equipos_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`),
+  ADD CONSTRAINT `equipos_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `equipos_ibfk_3` FOREIGN KEY (`marca_id`) REFERENCES `marcas` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -89,7 +89,7 @@
                                 <a href="<?= BASE_URL ?>/views/admin/cliente.php"><i class="ik ik-user-check"></i><span>Clientes</span></a>
                             </div>
                             <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-monitor"></i><span>Equipos ingresados</span></a>
+                                <a href="<?= BASE_URL ?>/views/admin/internamiento.php"><i class="ik ik-monitor"></i><span>Equipos ingresados</span></a>
                             </div>
                             <div class="nav-item">
                                 <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-activity"></i><span>Estados de reparación</span></a>
