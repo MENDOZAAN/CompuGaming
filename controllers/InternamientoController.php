@@ -1,32 +1,54 @@
 <?php
-require_once __DIR__ . '/../models/InternamientoModel.php';
+require_once __DIR__ . '/../config/database.php';
+
 header('Content-Type: application/json');
 
+$data = json_decode(file_get_contents('php://input'), true);
+
+if (!$data || !isset($data['cliente_id']) || !is_array($data['equipos'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Datos incompletos']);
+    exit;
+}
+
+$pdo->beginTransaction();
+
 try {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $datos = [
-            'cliente_id' => $_POST['cliente_id'] ?? null,
-            'tipo_equipo' => $_POST['tipo_equipo'] ?? '',
-            'marca_id' => $_POST['marca_id'] ?? null,
-            'modelo' => $_POST['modelo'] ?? '',
-            'serie' => $_POST['serie'] ?? '',
-            'accesorios' => $_POST['accesorios'] ?? '',
-            'falla_reportada' => $_POST['falla_reportada'] ?? '',
-            'servicio_id' => $_POST['servicio_id'] ?? null,
-            'precio_total' => $_POST['precio_total'] ?? 0,
-            'adelanto' => $_POST['adelanto'] ?? 0
-        ];
-
-        $ok = InternamientoModel::insertar($datos);
-
-        echo json_encode([
-            'status' => $ok ? 'ok' : 'error'
-        ]);
-        exit;
-    }
-} catch (Throwable $e) {
-    echo json_encode([
-        'status' => 'error',
-        'message' => $e->getMessage()
+    // Insertar internamiento principal
+    $stmt = $pdo->prepare("INSERT INTO internamientos (cliente_id, fecha, adelanto) VALUES (?, NOW(), ?)");
+    $stmt->execute([
+        $data['cliente_id'],
+        $data['adelanto'] ?? 0
     ]);
+
+    $internamiento_id = $pdo->lastInsertId();
+
+    // Insertar cada equipo asociado
+    $stmtEquipo = $pdo->prepare("
+        INSERT INTO equipos_internamiento (
+            internamiento_id, tipo_equipo_id, marca_id, modelo, serie,
+            accesorios, falla_reportada, servicio_id, precio
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    foreach ($data['equipos'] as $eq) {
+        $stmtEquipo->execute([
+            $internamiento_id,
+            $eq['tipo_id'],
+            $eq['marca_id'],
+            $eq['modelo'],
+            $eq['serie'],
+            $eq['accesorios'],
+            $eq['falla'],
+            $eq['servicio_id'],
+            $eq['precio']
+        ]);
+    }
+
+    $pdo->commit();
+
+    echo json_encode(['status' => 'ok', 'internamiento_id' => $internamiento_id]);
+} catch (Exception $e) {
+    $pdo->rollBack();
+    error_log('Error al registrar internamiento: ' . $e->getMessage());
+    echo json_encode(['status' => 'error', 'message' => 'No se pudo registrar']);
 }

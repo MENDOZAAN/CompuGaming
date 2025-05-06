@@ -1,93 +1,145 @@
-document.getElementById('agregarEquipoForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
+  const btnBuscarCliente = document.getElementById('btnBuscarClienteDB');
+  const btnAgregarEquipo = document.getElementById('btnAgregarEquipo');
+  const tablaEquiposBody = document.getElementById('tablaEquiposBody');
+  const totalPrecioElement = document.getElementById('totalPrecio');
+  const formInternamiento = document.getElementById('agregarEquipoForm');
 
-    const form = e.target;
-    const formData = new FormData(form);
+  let equiposAgregados = [];
 
-    try {
-        const res = await fetch(BASE_URL + '/controllers/InternamientoController.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await res.json();
-
-        if (data.status === 'ok') {
-            Swal.fire({
-                icon: 'success',
-                title: 'Equipo registrado',
-                text: 'El internamiento fue guardado correctamente.'
-            });
-
-            form.reset();
-            $('#agregarEquipoModal').modal('hide');
-        } else {
-            Swal.fire('Error', 'No se pudo registrar el internamiento.', 'error');
-        }
-    } catch (error) {
-        console.error(error);
-        Swal.fire('Error', 'Ocurrió un problema en la solicitud.', 'error');
-    }
-});
-
-document.getElementById('buscarClienteBtn').addEventListener('click', async () => {
-    const dni = document.getElementById('buscar_dni').value.trim();
-    if (!dni) return Swal.fire('Campo vacío', 'Ingresa un DNI o RUC.', 'warning');
-
-    try {
-      // Buscar en la BD primero
-      const res = await fetch('<?= BASE_URL ?>/controllers/BuscarClienteController.php', {
-        method: 'POST',
-        body: new URLSearchParams({ dni_ruc: dni })
-      });
-      const data = await res.json();
-
-      if (data.encontrado) {
-        document.getElementById('cliente_id').value = data.cliente.id;
-        document.getElementById('nombreClientePreview').innerText = data.cliente.nombres + ' ' + data.cliente.apellidos;
-      } else {
-        // Buscar en API externa
-        const apiRes = await fetch('<?= BASE_URL ?>/api/consulta_dni_ruc.php?numero=' + dni);
-        const clienteApi = await apiRes.json();
-
-        if (clienteApi.success) {
-          document.getElementById('modal_dni').value = clienteApi.numero;
-          document.getElementById('modal_nombres').value = clienteApi.nombre_completo;
-          document.getElementById('modal_direccion').value = clienteApi.direccion || '';
-          document.getElementById('modal_telefono').value = '';
-          $('#modalAgregarCliente').modal('show');
-        } else {
-          Swal.fire('No encontrado', 'No se encontró en la BD ni en la API.', 'info');
-        }
+  // Buscar cliente por DNI o RUC
+  btnBuscarCliente.addEventListener('click', async () => {
+      const dni = document.getElementById('buscar_dni_ruc').value.trim();
+      if (!dni) {
+          Swal.fire('Campo vacío', 'Ingresa un DNI o RUC.', 'warning');
+          return;
       }
-    } catch (err) {
-      console.error(err);
-      Swal.fire('Error', 'Ocurrió un problema al buscar.', 'error');
-    }
 
-    document.getElementById('agregarClienteForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-  
-      const res = await fetch(`${BASE_URL}/controllers/GuardarClienteDesdeInternamientoController.php`, {
-          method: 'POST',
-          body: formData
-      });
-  
-      const data = await res.json();
-      if (data.status === 'ok') {
-          // Cerrar el modal
-          const modal = bootstrap.Modal.getInstance(document.getElementById('agregarClienteModal'));
-          modal.hide();
-  
-          // Actualizar el formulario de internamiento
-          document.getElementById('clienteSeleccionado').innerText = data.nombre;
-          document.getElementById('cliente_id').value = data.id;
-  
-          Swal.fire('Éxito', 'Cliente registrado correctamente.', 'success');
-      } else {
-          Swal.fire('Error', 'No se pudo registrar el cliente.', 'error');
+      try {
+          const res = await fetch(`${BASE_URL}/controllers/BuscarClienteController.php`, {
+              method: 'POST',
+              body: new URLSearchParams({ dni_ruc: dni })
+          });
+
+          const data = await res.json();
+          if (data.status === 'ok') {
+              document.getElementById('cliente_id').value = data.id;
+              document.getElementById('clienteSeleccionado').innerText = data.nombre_completo;
+          } else {
+              Swal.fire('No encontrado', 'Cliente no encontrado.', 'info');
+          }
+      } catch (err) {
+          console.error(err);
+          Swal.fire('Error', 'Ocurrió un problema al buscar.', 'error');
       }
   });
-  
-}
+
+  // Añadir equipo a la tabla temporal
+  btnAgregarEquipo.addEventListener('click', () => {
+      const tipo = document.getElementById('tipo_equipo_id');
+      const marca = document.getElementById('marca_id');
+      const modelo = document.getElementById('modelo').value.trim();
+      const serie = document.getElementById('serie').value.trim();
+      const accesorios = document.getElementById('accesorios').value.trim();
+      const falla = document.getElementById('falla_reportada').value.trim();
+      const servicio = document.getElementById('servicio_id');
+      const precio = parseFloat(document.getElementById('precio_equipo').value) || 0;
+
+      if (!tipo.value || !marca.value || !modelo || !servicio.value) {
+          Swal.fire('Campos obligatorios', 'Completa los campos requeridos.', 'warning');
+          return;
+      }
+
+      const equipo = {
+          tipo_id: tipo.value,
+          tipo_texto: tipo.options[tipo.selectedIndex].text,
+          marca_id: marca.value,
+          marca_texto: marca.options[marca.selectedIndex].text,
+          modelo,
+          serie,
+          accesorios,
+          falla,
+          servicio_id: servicio.value,
+          servicio_texto: servicio.options[servicio.selectedIndex].text,
+          precio
+      };
+
+      equiposAgregados.push(equipo);
+      renderTablaEquipos();
+  });
+
+  // Renderizar la tabla
+  function renderTablaEquipos() {
+      tablaEquiposBody.innerHTML = '';
+      let total = 0;
+
+      equiposAgregados.forEach((eq, index) => {
+          total += eq.precio;
+          const row = document.createElement('tr');
+          row.innerHTML = `
+              <td>${eq.tipo_texto}</td>
+              <td>${eq.marca_texto}</td>
+              <td>${eq.modelo}</td>
+              <td>${eq.serie}</td>
+              <td>${eq.accesorios}</td>
+              <td>${eq.falla}</td>
+              <td>${eq.servicio_texto}</td>
+              <td>${eq.precio.toFixed(2)}</td>
+              <td><button class="btn btn-danger btn-sm" onclick="eliminarEquipo(${index})"><i class="ik ik-trash-2"></i></button></td>
+          `;
+          tablaEquiposBody.appendChild(row);
+      });
+
+      totalPrecioElement.textContent = total.toFixed(2);
+  }
+
+  // Eliminar equipo
+  window.eliminarEquipo = (index) => {
+      equiposAgregados.splice(index, 1);
+      renderTablaEquipos();
+  };
+
+  // Enviar internamiento
+  formInternamiento.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const clienteId = document.getElementById('cliente_id').value;
+      const adelanto = document.getElementById('adelanto').value;
+
+      if (!clienteId || equiposAgregados.length === 0) {
+          Swal.fire('Error', 'Faltan datos del cliente o equipos.', 'error');
+          return;
+      }
+
+      const payload = {
+          cliente_id: clienteId,
+          adelanto: adelanto,
+          equipos: equiposAgregados
+      };
+
+      try {
+          const res = await fetch(`${BASE_URL}/controllers/InternamientoController.php`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload)
+          });
+
+          const data = await res.json();
+
+          if (data.status === 'ok') {
+              Swal.fire('Registrado', 'Internamiento guardado correctamente.', 'success');
+              formInternamiento.reset();
+              equiposAgregados = [];
+              renderTablaEquipos();
+              $('#agregarEquipoModal').modal('hide');
+          } else {
+              Swal.fire('Error', 'No se pudo guardar.', 'error');
+          }
+      } catch (err) {
+          console.error(err);
+          Swal.fire('Error', 'Fallo al enviar datos.', 'error');
+      }
+  });
+});
