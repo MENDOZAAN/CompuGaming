@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-05-2025 a las 00:20:40
+-- Tiempo de generación: 07-05-2025 a las 23:38:35
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -45,33 +45,51 @@ CREATE TABLE `clientes` (
 --
 
 INSERT INTO `clientes` (`id`, `tipo_doc`, `dni_ruc`, `nombres`, `apellidos`, `razon_social`, `direccion`, `telefono`, `correo`, `fecha_registro`) VALUES
-(22, 'RUC', '20604235694', '', '', 'COMPU GAMING STORE E.I.R.L.', 'CAL. --- MZA. I LOTE. 38 URB. LA ESTANCIA DE CARABAYLLO LIMA LIMA CARABAYLLO', '', '', '2025-05-04 16:59:07'),
-(31, 'DNI', '04207303', 'JUAN', 'MENDOZA MIRAVAL', '', 'azul mina', '', '', '2025-05-05 12:57:14'),
-(33, 'RUC', '10712506810', '', '', 'MENDOZA ATENCIO NICO LIZANDRO', '', '', '', '2025-05-05 13:31:21');
+(1, 'RUC', '20604235694', '', '', 'COMPU GAMING STORE E.I.R.L.', 'CAL. --- MZA. I LOTE. 38 URB. LA ESTANCIA DE CARABAYLLO LIMA LIMA CARABAYLLO', '', '', '2025-05-04 16:59:07'),
+(34, 'DNI', '71250681', 'NICO LIZANDRO', 'MENDOZA ATENCIO', '', '', '979563045', '', '2025-05-05 17:57:15'),
+(35, 'RUC', '20601929563', '', '', 'CORP ERA-TEG EMPRESA INDIVIDUAL DE RESPONSABILIDAD LIMITADA - CORP ERA-TEG E.I.R.L.', 'CAL. REAL DE MINAS MZA. T LOTE. 13 CERCADO CHAUPIMARCA PASCO PASCO CHAUPIMARCA', '', '', '2025-05-05 19:21:29');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `equipos`
+-- Estructura de tabla para la tabla `equipos_internamiento`
 --
 
-CREATE TABLE `equipos` (
+CREATE TABLE `equipos_internamiento` (
   `id` int(11) NOT NULL,
-  `cliente_id` int(11) NOT NULL,
-  `usuario_id` int(11) NOT NULL,
-  `tipo_equipo_id` int(11) NOT NULL,
-  `marca_id` int(11) NOT NULL,
+  `internamiento_id` int(11) NOT NULL,
+  `tipo_equipo` varchar(100) NOT NULL,
+  `marca` varchar(100) DEFAULT NULL,
   `modelo` varchar(100) DEFAULT NULL,
-  `serie` varchar(100) DEFAULT NULL,
-  `accesorios` text DEFAULT NULL,
+  `nro_serie` varchar(100) DEFAULT NULL,
   `falla_reportada` text DEFAULT NULL,
-  `diagnostico` text DEFAULT NULL,
-  `estado` enum('Recibido','En reparación','Terminado') DEFAULT 'Recibido',
-  `servicio_id` int(11) NOT NULL,
-  `adelanto` decimal(10,2) DEFAULT 0.00,
-  `precio_total` decimal(10,2) DEFAULT 0.00,
-  `fecha_ingreso` datetime DEFAULT current_timestamp()
+  `servicio_solicitado` text DEFAULT NULL,
+  `accesorios` text DEFAULT NULL,
+  `estado_equipo` enum('Recibido','En reparación','Terminado','Entregado') DEFAULT 'Recibido',
+  `precio_aprox` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `internamientos`
+--
+
+CREATE TABLE `internamientos` (
+  `id` int(11) NOT NULL,
+  `correlativo` varchar(20) NOT NULL,
+  `cliente_id` int(11) NOT NULL,
+  `fecha_ingreso` datetime NOT NULL DEFAULT current_timestamp(),
+  `estado_general` enum('Recibido','En reparación','Terminado','Entregado') DEFAULT 'Recibido',
+  `observaciones` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `internamientos`
+--
+
+INSERT INTO `internamientos` (`id`, `correlativo`, `cliente_id`, `fecha_ingreso`, `estado_general`, `observaciones`) VALUES
+(2, 'CGS-00001', 34, '2025-05-05 19:28:39', 'Recibido', 'Cliente trajo varios equipos con fallas diversas.');
 
 -- --------------------------------------------------------
 
@@ -181,15 +199,19 @@ ALTER TABLE `clientes`
   ADD UNIQUE KEY `dni_ruc` (`dni_ruc`);
 
 --
--- Indices de la tabla `equipos`
+-- Indices de la tabla `equipos_internamiento`
 --
-ALTER TABLE `equipos`
+ALTER TABLE `equipos_internamiento`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `cliente_id` (`cliente_id`),
-  ADD KEY `usuario_id` (`usuario_id`),
-  ADD KEY `tipo_equipo_id` (`tipo_equipo_id`),
-  ADD KEY `marca_id` (`marca_id`),
-  ADD KEY `servicio_id` (`servicio_id`);
+  ADD KEY `internamiento_id` (`internamiento_id`);
+
+--
+-- Indices de la tabla `internamientos`
+--
+ALTER TABLE `internamientos`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `correlativo` (`correlativo`),
+  ADD KEY `cliente_id` (`cliente_id`);
 
 --
 -- Indices de la tabla `marcas`
@@ -224,13 +246,19 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
--- AUTO_INCREMENT de la tabla `equipos`
+-- AUTO_INCREMENT de la tabla `equipos_internamiento`
 --
-ALTER TABLE `equipos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `equipos_internamiento`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT de la tabla `internamientos`
+--
+ALTER TABLE `internamientos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -261,14 +289,16 @@ ALTER TABLE `usuarios`
 --
 
 --
--- Filtros para la tabla `equipos`
+-- Filtros para la tabla `equipos_internamiento`
 --
-ALTER TABLE `equipos`
-  ADD CONSTRAINT `equipos_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`),
-  ADD CONSTRAINT `equipos_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
-  ADD CONSTRAINT `equipos_ibfk_3` FOREIGN KEY (`tipo_equipo_id`) REFERENCES `tipos_equipo` (`id`),
-  ADD CONSTRAINT `equipos_ibfk_4` FOREIGN KEY (`marca_id`) REFERENCES `marcas` (`id`),
-  ADD CONSTRAINT `equipos_ibfk_5` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`);
+ALTER TABLE `equipos_internamiento`
+  ADD CONSTRAINT `equipos_internamiento_ibfk_1` FOREIGN KEY (`internamiento_id`) REFERENCES `internamientos` (`id`);
+
+--
+-- Filtros para la tabla `internamientos`
+--
+ALTER TABLE `internamientos`
+  ADD CONSTRAINT `internamientos_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
