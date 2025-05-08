@@ -1,3 +1,4 @@
+
 <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/CompuGaming/config/config.php'; ?>
 <!DOCTYPE html>
 <html lang="es">

@@ -1,0 +1,14 @@
+| Módulo                           | ¿Quién lo usa?      | ¿Para qué sirve?                                                 |
+|--------------------------------- |---------------------|------------------------------------------------------------------|
+| **Dashboard**                    | Todos               | Ver estadísticas rápidas (n° equipos, ingresos, entregas, etc.)  |
+| **Usuarios**                     | Solo Admin          | Crear, editar y eliminar usuarios del sistema                    |
+| **Roles / Permisos**             | Solo Admin          | Gestionar los niveles de acceso del sistema                      |
+| **Clientes**                     | Admin, Técnico      | Registrar y consultar datos de clientes                          |
+| **Equipos ingresados**           | Técnico, Admin      | Registrar equipos que llegan para soporte                        |
+| **Estados de reparación**        | Técnico             | Cambiar estado (diagnóstico, en reparación, listo, entregado)    |
+| **Guía de ingreso/salida (PDF)** | Técnico, Admin      | Generar documentos con QR para entrega y recepción               |
+| **Historial de atención**        | Admin, Técnico      | Ver todo el historial de soporte por cliente o equipo            |
+| **Reportes**                     | Admin               | Ver reportes por mes, técnico, estado, etc. (exportar PDF/Excel) |
+| **Página pública de consulta**   | Cliente             | Consultar estado del equipo con DNI o código                     |
+
+mass

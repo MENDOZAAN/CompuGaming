@@ -1,0 +1,12 @@
+Array
+(
+    [id] => 4
+    [nombre] => Nico Lizandro
+    [apellido] => Mendoza
+    [nombre_usuario] => admin
+    [rol] => Admin
+    [estado] => 1
+    [password_actual] => 
+    [password_nueva] => 
+    [accion] => editar
+)

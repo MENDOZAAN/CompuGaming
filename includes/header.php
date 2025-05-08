@@ -65,7 +65,7 @@
         <div class="page-wrap">
             <div class="app-sidebar colored">
                 <div class="sidebar-header">
-                    <a class="header-brand" href="index.php">
+                    <a class="header-brand" href="">
                         <div class="logo-img">
                             <img src="<?= BASE_URL ?>/assets/img/Logo grande blanco.png" class="header-brand-img"
                                 style="width: 110px; height: auto;margin-left: 50px;">
@@ -80,10 +80,13 @@
                         <nav id="main-menu-navigation" class="navigation-main">
                             <div class="nav-lavel">Navegación</div>
 
+                            <!-- Visible para todos (Admin y Usuario) -->
                             <div class="nav-item">
                                 <a href="<?= BASE_URL ?>/views/admin"><i class="ik ik-bar-chart-2"></i><span>Dashboard</span></a>
                             </div>
+
                             <div class="nav-item">
+<<<<<<< HEAD
                                 <a href="<?= BASE_URL ?>/views/admin/usuario.php"><i class="ik ik-users"></i><span>Usuarios</span></a>
                             </div>
                             <div class="nav-item">
@@ -115,6 +118,31 @@
                     </div>
                 </div>
             </div>          
+=======
+                                <a href="<?= BASE_URL ?>/views/admin/cliente.php"><i class="ik ik-user-check"></i><span>Clientes</span></a>
+                            </div>
+                            <div class="nav-item">
+                                <a href="<?= BASE_URL ?>/views/admin/internamiento.php"><i class="ik ik-monitor"></i><span>Internar Equipo</span></a>
+                            </div>                            
+                           
+                            <div class="nav-item">
+                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-globe"></i><span>Página pública de consulta</span></a>
+                            </div>
+
+                            <!-- Solo para rol Admin -->
+                            <?php if ($_SESSION['usuario']['rol'] === 'Admin'): ?>
+                                <div class="nav-item">
+                                    <a href="<?= BASE_URL ?>/views/admin/usuario.php"><i class="ik ik-users"></i><span>Usuarios</span></a>
+                                </div>                               
+                               
+                                
+                            <?php endif; ?>
+                        </nav>
+                    </div>
+
+                </div>
+            </div>
+>>>>>>> origin/nico
 
 
             <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

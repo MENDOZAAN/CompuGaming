@@ -1,10 +1,10 @@
 <?php
 require_once 'config/database.php';
 
-$nombre = "Nico";
-$apellido = "Mendoza";
-$nombre_usuario = "admin";
-$password_plano = "admin"; // Cambia aquí si deseas otra contraseña
+$nombre = "Marlon";
+$apellido = "Canta";
+$nombre_usuario = "marlon";
+$password_plano = "marlon"; 
 $rol_id = 1;
 $estado = 1;
 

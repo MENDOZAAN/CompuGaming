@@ -1,0 +1,1 @@
+SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'admin' for key 'nombre_usuario'
