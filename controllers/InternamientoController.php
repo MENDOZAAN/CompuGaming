@@ -9,6 +9,24 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: ' . BASE_URL . '/login');
     exit;
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'editar_internamiento') {
+    try {
+        $id = intval($_POST['id']);
+        $observaciones = trim($_POST['observaciones']);
+        $tecnico_id = !empty($_POST['tecnico_id']) ? intval($_POST['tecnico_id']) : null;
+        $estado = trim($_POST['estado_general']);
+
+        $stmt = $pdo->prepare("UPDATE internamientos SET observaciones = ?, tecnico_id = ?, estado_general = ? WHERE id = ?");
+        $stmt->execute([$observaciones, $tecnico_id, $estado, $id]);
+
+        echo json_encode(['status' => 'ok']);
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'mensaje' => $e->getMessage()]);
+    }
+    exit;
+}
+
+
 
 try {
     // 1. Cliente existente o nuevo

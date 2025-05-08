@@ -105,6 +105,19 @@ include __DIR__ . '/../../includes/header.php';
                       <div id="equiposContainer"></div>
                     </div>
                   </div>
+                  <div class="form-group">
+                    <label for="tecnico_id" class="font-weight-bold">Técnico Asignado</label>
+                    <select name="tecnico_id" id="tecnico_id" class="form-control form-control-lg">
+                      <option value="">-- Seleccionar técnico --</option>
+                      <?php
+                      $stmt = $pdo->query("SELECT id, nombre, apellido FROM usuarios WHERE rol = 'Admin' OR rol = 'Usuario'");
+                      foreach ($stmt as $row): ?>
+                        <option value="<?= $row['id'] ?>">
+                          <?= $row['nombre'] . ' ' . $row['apellido'] ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
 
                 </div>
                 <div class="modal-footer">
@@ -160,7 +173,19 @@ include __DIR__ . '/../../includes/header.php';
                     <td><?= htmlspecialchars($row['correlativo']) ?></td>
                     <td><?= htmlspecialchars($cliente) ?></td>
                     <td><?= date('d/m/Y H:i', strtotime($row['fecha_ingreso'])) ?></td>
-                    <td><span class="badge badge-info"><?= $row['estado_general'] ?></span></td>
+                    <td>
+                      <?php
+                      $estado = $row['estado_general'];
+                      $clase = match ($estado) {
+                        'Recibido'      => 'badge-secondary',
+                        'En reparación' => 'badge-warning',
+                        'Terminado'     => 'badge-info',
+                        'Entregado'     => 'badge-success',
+                        default         => 'badge-dark',
+                      };
+                      ?>
+                      <span class="badge <?= $clase ?>"><?= $estado ?></span>
+                    </td>
                     <td><?= htmlspecialchars($row['observaciones']) ?></td>
                     <td>
                       <div style="display: flex; gap: 20px;">
@@ -170,9 +195,16 @@ include __DIR__ . '/../../includes/header.php';
                         </a>
 
                         <!-- Editar -->
-                        <a href="#" class="btnEditarInternamiento" data-id="<?= $row['id']; ?>">
+                        <a href="#"
+                          class="btnEditarInternamiento"
+                          data-id="<?= $row['id']; ?>"
+                          data-observaciones="<?= htmlspecialchars($row['observaciones']) ?>"
+                          data-fecha="<?= $row['fecha_ingreso'] ?>"
+                          data-tecnico="<?= $row['tecnico_id'] ?>"
+                          data-estado="<?= $row['estado_general'] ?>">
                           <i class="ik ik-edit" style="color: red;"></i>
                         </a>
+
                         <!-- PDF o guía -->
                         <a href="<?= BASE_URL ?>/controllers/generar_guia.php?id=<?= $row['id']; ?>" target="_blank">
                           <i class="ik ik-printer" style="color: blue;"></i>
@@ -222,10 +254,72 @@ include __DIR__ . '/../../includes/header.php';
                     </tr>
                   </tbody>
                 </table>
+                <!-- Formulario de subida de imagen -->
+                <hr>
+                <h6>Subir imagen para un equipo</h6>
+                <form class="form-subir-imagen" data-equipo-id="<?= $eq['id'] ?>">
+                  <input type="file" name="imagen" accept="image/*" required>
+                  <img class="preview-img" style="display:none; max-width:100px;">
+                  <button type="submit" class="btn btn-primary btn-sm">Subir</button>
+                </form>
+                <!-- Aquí se mostrarán las imágenes ya subidas -->
+                <div id="imagenesSubidas" class="mt-3"></div>
+
               </div>
             </div>
           </div>
         </div>
+
+
+        <!-- Modal Editar Internamiento -->
+        <div class="modal fade" id="modalEditarInternamiento" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <form id="formEditarInternamiento">
+                <div class="modal-header bg-dark text-white">
+                  <h5 class="modal-title"><i class="ik ik-edit"></i> Editar Internamiento</h5>
+                  <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+
+                <div class="modal-body">
+                  <input type="hidden" name="id" id="editar_internamiento_id">
+
+                  <div class="form-group">
+                    <label>Observaciones generales</label>
+                    <textarea name="observaciones" id="editar_observaciones" class="form-control" rows="3"></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Técnico asignado</label>
+                    <select name="tecnico_id" id="editar_tecnico_id" class="form-control">
+                      <option value="">-- Seleccionar técnico --</option>
+                      <?php
+                      $stmt = $pdo->query("SELECT id, nombre, apellido FROM usuarios WHERE rol IN ('Admin', 'Usuario')");
+                      foreach ($stmt as $u): ?>
+                        <option value="<?= $u['id'] ?>"><?= $u['nombre'] . ' ' . $u['apellido'] ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Estado del internamiento</label>
+                    <select name="estado_general" id="editar_estado_general" class="form-control">
+                      <option value="Recibido">Recibido</option>
+                      <option value="En reparación">En reparación</option>
+                      <option value="Terminado">Terminado</option>
+                      <option value="Entregado">Entregado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary"><i class="ik ik-save"></i> Guardar cambios</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
 
 
         <!-- Script de búsqueda -->
@@ -371,6 +465,91 @@ include __DIR__ . '/../../includes/header.php';
       }
     });
   });
+</script>
+
+<script>
+  document.querySelectorAll('.btnEditarInternamiento').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.dataset.id;
+      const obs = this.dataset.observaciones;
+      const tecnico = this.dataset.tecnico;
+      const estado = this.dataset.estado;
+
+      document.getElementById('editar_internamiento_id').value = id;
+      document.getElementById('editar_observaciones').value = obs;
+      document.getElementById('editar_tecnico_id').value = tecnico;
+      document.getElementById('editar_estado_general').value = estado;
+
+      $('#modalEditarInternamiento').modal('show');
+    });
+  });
+</script>
+<script>
+  document.getElementById('formEditarInternamiento').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    formData.append('accion', 'editar_internamiento');
+
+    const res = await fetch(`${BASE_URL}/controllers/InternamientoController.php`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (data.status === 'ok') {
+      Swal.fire('Actualizado', 'Internamiento modificado correctamente.', 'success')
+        .then(() => location.reload());
+    } else {
+      Swal.fire('Error', data.mensaje || 'No se pudo actualizar.', 'error');
+    }
+  });
+</script>
+
+<!-- subir img -->
+<script>
+  document.addEventListener('submit', async function(e) {
+    if (e.target.matches('.form-subir-imagen')) {
+      e.preventDefault();
+
+      const form = e.target;
+      const equipoId = form.dataset.equipoId;
+      const input = form.querySelector('input[type="file"]');
+      const preview = form.querySelector('.preview-img');
+
+      if (!input.files.length) return;
+
+      const formData = new FormData();
+      formData.append('imagen', input.files[0]);
+      formData.append('equipo_id', equipoId);
+
+      try {
+        const res = await fetch(`${BASE_URL}/controllers/upload_imagen_equipo.php`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (data.status === 'ok') {
+          Swal.fire('Imagen subida', 'La imagen fue guardada correctamente.', 'success');
+          if (preview) {
+            preview.src = `${BASE_URL}/${data.ruta}`;
+            preview.style.display = 'block';
+          }
+        } else {
+          Swal.fire('Error', data.mensaje || 'Error al subir imagen.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo subir la imagen.', 'error');
+      }
+    }
+  });
+</script>
+
+<script>
+  const BASE_URL = "<?= BASE_URL ?>";
 </script>
 
 <script src="<?= BASE_URL ?>/assets/js/internamiento.js"></script>

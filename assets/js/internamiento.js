@@ -1,4 +1,4 @@
-<script>
+
 document.addEventListener('DOMContentLoaded', function () {
   let contadorEquipos = 0;
 
@@ -110,8 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       
   });
-
   
 
 });
-</script>
+

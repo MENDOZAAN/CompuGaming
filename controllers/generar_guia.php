@@ -11,10 +11,15 @@ if (!isset($_GET['id'])) {
 $internamiento_id = intval($_GET['id']);
 
 // Obtener internamiento y cliente
-$stmt = $pdo->prepare("SELECT i.*, c.tipo_doc, c.dni_ruc, c.nombres, c.apellidos, c.razon_social 
-                       FROM internamientos i 
-                       JOIN clientes c ON c.id = i.cliente_id 
-                       WHERE i.id = ?");
+$stmt = $pdo->prepare("SELECT 
+    i.*, 
+    c.tipo_doc, c.dni_ruc, c.nombres, c.apellidos, c.razon_social, c.telefono,
+    u.nombre AS tecnico_nombre, u.apellido AS tecnico_apellido
+FROM internamientos i
+JOIN clientes c ON c.id = i.cliente_id
+LEFT JOIN usuarios u ON u.id = i.tecnico_id
+WHERE i.id = ?");
+
 $stmt->execute([$internamiento_id]);
 $internamiento = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -91,17 +96,21 @@ ob_start();
         </tr>
         <tr>
             <td><strong>DNI/RUC:</strong> <?= $internamiento['dni_ruc'] ?></td>
+
+        <tr>
+            <td><strong>Teléfono:</strong> <?= $internamiento['telefono'] ?></td>
         </tr>
         <tr>
             <td><strong>Fecha Ingreso:</strong> <?= date('d/m/Y H:i', strtotime($internamiento['fecha_ingreso'])) ?></td>
         </tr>
         <tr>
-            <td><strong>Estado:</strong> <?= $internamiento['estado_general'] ?></td>
-        </tr>
-        <tr>
             <td><strong>Observaciones:</strong> <?= $internamiento['observaciones'] ?></td>
         </tr>
+        <tr>
+            <td><strong>Técnico Asignado:</strong> <?= $internamiento['tecnico_nombre'] . ' ' . $internamiento['tecnico_apellido'] ?></td>
+        </tr>
     </table>
+
 
     <h4 style="margin-top: 15px;">Equipos Ingresados</h4>
     <table width="100%" border="1" cellspacing="0" cellpadding="5" style="font-size: 11px;">

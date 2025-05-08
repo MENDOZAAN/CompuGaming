@@ -49,8 +49,10 @@ class InternamientoModel
     public static function obtenerTodosConCliente()
     {
         global $pdo;
-        $sql = "SELECT i.id, i.correlativo, i.fecha_ingreso, i.estado_general, i.observaciones,
-                   c.tipo_doc, c.dni_ruc, c.nombres, c.apellidos, c.razon_social
+        $sql = "SELECT 
+              i.id, i.correlativo, i.fecha_ingreso, i.estado_general, 
+              i.observaciones, i.tecnico_id,
+              c.tipo_doc, c.dni_ruc, c.nombres, c.apellidos, c.razon_social
             FROM internamientos i
             JOIN clientes c ON i.cliente_id = c.id
             ORDER BY i.fecha_ingreso DESC";
