@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-05-2025 a las 23:38:35
+-- Tiempo de generación: 08-05-2025 a las 21:36:55
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -47,7 +47,9 @@ CREATE TABLE `clientes` (
 INSERT INTO `clientes` (`id`, `tipo_doc`, `dni_ruc`, `nombres`, `apellidos`, `razon_social`, `direccion`, `telefono`, `correo`, `fecha_registro`) VALUES
 (1, 'RUC', '20604235694', '', '', 'COMPU GAMING STORE E.I.R.L.', 'CAL. --- MZA. I LOTE. 38 URB. LA ESTANCIA DE CARABAYLLO LIMA LIMA CARABAYLLO', '', '', '2025-05-04 16:59:07'),
 (34, 'DNI', '71250681', 'NICO LIZANDRO', 'MENDOZA ATENCIO', '', '', '979563045', '', '2025-05-05 17:57:15'),
-(35, 'RUC', '20601929563', '', '', 'CORP ERA-TEG EMPRESA INDIVIDUAL DE RESPONSABILIDAD LIMITADA - CORP ERA-TEG E.I.R.L.', 'CAL. REAL DE MINAS MZA. T LOTE. 13 CERCADO CHAUPIMARCA PASCO PASCO CHAUPIMARCA', '', '', '2025-05-05 19:21:29');
+(35, 'RUC', '20601929563', '', '', 'CORP ERA-TEG EMPRESA INDIVIDUAL DE RESPONSABILIDAD LIMITADA - CORP ERA-TEG E.I.R.L.', 'CAL. REAL DE MINAS MZA. T LOTE. 13 CERCADO CHAUPIMARCA PASCO PASCO CHAUPIMARCA', '', '', '2025-05-05 19:21:29'),
+(36, 'DNI', '04207303', 'JUAN', 'MENDOZA MIRAVAL', '', '', '', '', '2025-05-07 16:58:26'),
+(37, 'RUC', '14444', 'jose', 'mesa', '', '', '79797979', '', '2025-05-07 18:08:27');
 
 -- --------------------------------------------------------
 
@@ -69,6 +71,49 @@ CREATE TABLE `equipos_internamiento` (
   `precio_aprox` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `equipos_internamiento`
+--
+
+INSERT INTO `equipos_internamiento` (`id`, `internamiento_id`, `tipo_equipo`, `marca`, `modelo`, `nro_serie`, `falla_reportada`, `servicio_solicitado`, `accesorios`, `estado_equipo`, `precio_aprox`) VALUES
+(12, 3, 'Tablet', 'Epson', 'ds', '133', '2', 'Cambio de disco duro de PC', 'd', 'Recibido', 100.00),
+(13, 4, 'Laptop', 'HP', 'xd', '12323433553', 'no prende la cosa', 'Cambio de disco duro de PC', 'no tiene', 'Recibido', 0.00),
+(14, 5, 'Laptop', 'Epson', 'dfd', 'd', 'd', 'Formateo y reinstalación de sistema operativo', 'd', 'Recibido', 0.00),
+(15, 6, 'Monitor', 'Epson', '', '2332', 'mo mrpende', 'Formateo y reinstalación de sistema operativo', 'eww', 'Recibido', 0.00),
+(16, 6, 'Teclado', 'Epson', 'dfd', '', '', 'Formateo y reinstalación de sistema operativo', 'trt', 'Recibido', 0.00),
+(17, 7, 'Impresora', 'Dells', 'pc1', '2332', 'pc1', 'Cambio de disco duro de PC', 'pc1', 'Recibido', 0.00),
+(18, 7, 'Tablet', 'Epson', 'pc1', 'p1221', 'pc1', 'Mantenimiento general de laptop', 'pc1', 'Recibido', 0.00),
+(19, 8, 'Laptop', 'Dells', 'hola', 'ds', 'ds', 'Actualización de software', 'd', 'Recibido', 0.00),
+(20, 9, 'Monitor', 'Epson', 'hdsdfd', '2313', 'NO PRENDE', 'Cambio de disco duro de PC', '', 'Recibido', 0.00),
+(21, 10, 'Monitor', 'Epson', 'xd', 'xd', 'dsd', 'Formateo y reinstalación de sistema operativo', 'dsd', 'Recibido', 0.00);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `historial_tecnico`
+--
+
+CREATE TABLE `historial_tecnico` (
+  `id` int(11) NOT NULL,
+  `internamiento_id` int(11) DEFAULT NULL,
+  `tecnico_id` int(11) DEFAULT NULL,
+  `comentario` text DEFAULT NULL,
+  `fecha` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `imagenes_equipo`
+--
+
+CREATE TABLE `imagenes_equipo` (
+  `id` int(11) NOT NULL,
+  `equipo_id` int(11) NOT NULL,
+  `ruta_imagen` varchar(255) DEFAULT NULL,
+  `fecha_subida` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -81,15 +126,23 @@ CREATE TABLE `internamientos` (
   `cliente_id` int(11) NOT NULL,
   `fecha_ingreso` datetime NOT NULL DEFAULT current_timestamp(),
   `estado_general` enum('Recibido','En reparación','Terminado','Entregado') DEFAULT 'Recibido',
-  `observaciones` text DEFAULT NULL
+  `observaciones` text DEFAULT NULL,
+  `tecnico_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `internamientos`
 --
 
-INSERT INTO `internamientos` (`id`, `correlativo`, `cliente_id`, `fecha_ingreso`, `estado_general`, `observaciones`) VALUES
-(2, 'CGS-00001', 34, '2025-05-05 19:28:39', 'Recibido', 'Cliente trajo varios equipos con fallas diversas.');
+INSERT INTO `internamientos` (`id`, `correlativo`, `cliente_id`, `fecha_ingreso`, `estado_general`, `observaciones`, `tecnico_id`) VALUES
+(3, 'CGS-00001', 35, '2025-05-07 18:04:14', 'Terminado', 'sd', NULL),
+(4, 'CGS-00002', 37, '2025-05-07 18:08:27', 'Recibido', 'no prende', NULL),
+(5, 'CGS-00003', 34, '2025-05-07 18:18:02', 'Recibido', 'ds', NULL),
+(6, 'CGS-00004', 34, '2025-05-07 18:29:38', 'Recibido', '', NULL),
+(7, 'CGS-00005', 35, '2025-05-07 18:32:10', 'Recibido', '1', NULL),
+(8, 'CGS-00006', 34, '2025-05-07 18:48:31', 'Recibido', 'dsd', NULL),
+(9, 'G-INT-00007', 36, '2025-05-07 18:59:04', 'En reparación', 'FALTA REPUESTPS', 6),
+(10, 'G-INT-00008', 1, '2025-05-07 21:05:53', 'En reparación', 'HOLA', 4);
 
 -- --------------------------------------------------------
 
@@ -110,7 +163,7 @@ INSERT INTO `marcas` (`id`, `nombre`) VALUES
 (1, 'HP'),
 (2, 'Lenovo'),
 (3, 'Epson'),
-(4, 'Dell');
+(4, 'Dells');
 
 -- --------------------------------------------------------
 
@@ -206,12 +259,28 @@ ALTER TABLE `equipos_internamiento`
   ADD KEY `internamiento_id` (`internamiento_id`);
 
 --
+-- Indices de la tabla `historial_tecnico`
+--
+ALTER TABLE `historial_tecnico`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `internamiento_id` (`internamiento_id`),
+  ADD KEY `tecnico_id` (`tecnico_id`);
+
+--
+-- Indices de la tabla `imagenes_equipo`
+--
+ALTER TABLE `imagenes_equipo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `equipo_id` (`equipo_id`);
+
+--
 -- Indices de la tabla `internamientos`
 --
 ALTER TABLE `internamientos`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `correlativo` (`correlativo`),
-  ADD KEY `cliente_id` (`cliente_id`);
+  ADD KEY `cliente_id` (`cliente_id`),
+  ADD KEY `fk_tecnico` (`tecnico_id`);
 
 --
 -- Indices de la tabla `marcas`
@@ -246,19 +315,31 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `equipos_internamiento`
 --
 ALTER TABLE `equipos_internamiento`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT de la tabla `historial_tecnico`
+--
+ALTER TABLE `historial_tecnico`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `imagenes_equipo`
+--
+ALTER TABLE `imagenes_equipo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `internamientos`
 --
 ALTER TABLE `internamientos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -295,9 +376,23 @@ ALTER TABLE `equipos_internamiento`
   ADD CONSTRAINT `equipos_internamiento_ibfk_1` FOREIGN KEY (`internamiento_id`) REFERENCES `internamientos` (`id`);
 
 --
+-- Filtros para la tabla `historial_tecnico`
+--
+ALTER TABLE `historial_tecnico`
+  ADD CONSTRAINT `historial_tecnico_ibfk_1` FOREIGN KEY (`internamiento_id`) REFERENCES `internamientos` (`id`),
+  ADD CONSTRAINT `historial_tecnico_ibfk_2` FOREIGN KEY (`tecnico_id`) REFERENCES `usuarios` (`id`);
+
+--
+-- Filtros para la tabla `imagenes_equipo`
+--
+ALTER TABLE `imagenes_equipo`
+  ADD CONSTRAINT `imagenes_equipo_ibfk_1` FOREIGN KEY (`equipo_id`) REFERENCES `equipos_internamiento` (`id`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `internamientos`
 --
 ALTER TABLE `internamientos`
+  ADD CONSTRAINT `fk_tecnico` FOREIGN KEY (`tecnico_id`) REFERENCES `usuarios` (`id`),
   ADD CONSTRAINT `internamientos_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`);
 COMMIT;
 
