@@ -8,7 +8,7 @@ class InternamientoModel
     {
         global $pdo;
         $stmt = $pdo->query("SELECT COUNT(*) + 1 AS total FROM internamientos");
-        $correlativo = "CGS-" . str_pad($stmt->fetchColumn(), 5, "0", STR_PAD_LEFT);
+        $correlativo = "G-INT-" . str_pad($stmt->fetchColumn(), 5, "0", STR_PAD_LEFT);
         return $correlativo;
     }
 
@@ -45,5 +45,16 @@ class InternamientoModel
                 $eq['precio'] ?: 0
             ]);
         }
+    }
+    public static function obtenerTodosConCliente()
+    {
+        global $pdo;
+        $sql = "SELECT i.id, i.correlativo, i.fecha_ingreso, i.estado_general, i.observaciones,
+                   c.tipo_doc, c.dni_ruc, c.nombres, c.apellidos, c.razon_social
+            FROM internamientos i
+            JOIN clientes c ON i.cliente_id = c.id
+            ORDER BY i.fecha_ingreso DESC";
+        $stmt = $pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
