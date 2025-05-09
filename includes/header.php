@@ -86,39 +86,6 @@
                             </div>
 
                             <div class="nav-item">
-<<<<<<< HEAD
-                                <a href="<?= BASE_URL ?>/views/admin/usuario.php"><i class="ik ik-users"></i><span>Usuarios</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-shield"></i><span>Roles / Permisos</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-user-check"></i><span>Clientes</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-monitor"></i><span>Equipos ingresados</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-activity"></i><span>Estados de reparación</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-file-text"></i><span>Guía de ingreso/salida</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-clock"></i><span>Historial de atención</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-pie-chart"></i><span>Reportes</span></a>
-                            </div>
-                            <div class="nav-item">
-                                <a href="<?= BASE_URL ?>/views/admin/user.php"><i class="ik ik-globe"></i><span>Página pública de consulta</span></a>
-                            </div>
-                        </nav>
-
-                    </div>
-                </div>
-            </div>          
-=======
                                 <a href="<?= BASE_URL ?>/views/admin/cliente.php"><i class="ik ik-user-check"></i><span>Clientes</span></a>
                             </div>
                             <div class="nav-item">
@@ -142,7 +109,6 @@
 
                 </div>
             </div>
->>>>>>> origin/nico
 
 
             <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
