@@ -254,17 +254,6 @@ include __DIR__ . '/../../includes/header.php';
                     </tr>
                   </tbody>
                 </table>
-                <!-- Formulario de subida de imagen -->
-                <hr>
-                <h6>Subir imagen para un equipo</h6>
-                <form class="form-subir-imagen" data-equipo-id="<?= $eq['id'] ?>">
-                  <input type="file" name="imagen" accept="image/*" required>
-                  <img class="preview-img" style="display:none; max-width:100px;">
-                  <button type="submit" class="btn btn-primary btn-sm">Subir</button>
-                </form>
-                <!-- Aquí se mostrarán las imágenes ya subidas -->
-                <div id="imagenesSubidas" class="mt-3"></div>
-
               </div>
             </div>
           </div>
@@ -446,17 +435,18 @@ include __DIR__ . '/../../includes/header.php';
         let rows = '';
         data.forEach((eq, i) => {
           rows += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${eq.tipo_equipo}</td>
-            <td>${eq.marca}</td>
-            <td>${eq.modelo}</td>
-            <td>${eq.nro_serie}</td>
-            <td>${eq.falla_reportada}</td>
-            <td>${eq.servicio_solicitado}</td>
-          </tr>
-        `;
+            <tr>
+              <td>${i + 1}</td>
+              <td>${eq.tipo_equipo}</td>
+              <td>${eq.marca}</td>
+              <td>${eq.modelo}</td>
+              <td>${eq.nro_serie}</td>
+              <td>${eq.falla_reportada}</td>
+              <td>${eq.servicio_solicitado}</td>
+            </tr>
+          `;
         });
+
         tbody.innerHTML = rows;
 
       } catch (err) {
@@ -466,6 +456,7 @@ include __DIR__ . '/../../includes/header.php';
     });
   });
 </script>
+
 
 <script>
   document.querySelectorAll('.btnEditarInternamiento').forEach(btn => {
@@ -507,50 +498,8 @@ include __DIR__ . '/../../includes/header.php';
   });
 </script>
 
-<!-- subir img -->
-<script>
-  document.addEventListener('submit', async function(e) {
-    if (e.target.matches('.form-subir-imagen')) {
-      e.preventDefault();
 
-      const form = e.target;
-      const equipoId = form.dataset.equipoId;
-      const input = form.querySelector('input[type="file"]');
-      const preview = form.querySelector('.preview-img');
 
-      if (!input.files.length) return;
-
-      const formData = new FormData();
-      formData.append('imagen', input.files[0]);
-      formData.append('equipo_id', equipoId);
-
-      try {
-        const res = await fetch(`${BASE_URL}/controllers/upload_imagen_equipo.php`, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-
-        if (data.status === 'ok') {
-          Swal.fire('Imagen subida', 'La imagen fue guardada correctamente.', 'success');
-          if (preview) {
-            preview.src = `${BASE_URL}/${data.ruta}`;
-            preview.style.display = 'block';
-          }
-        } else {
-          Swal.fire('Error', data.mensaje || 'Error al subir imagen.', 'error');
-        }
-      } catch (err) {
-        console.error(err);
-        Swal.fire('Error', 'No se pudo subir la imagen.', 'error');
-      }
-    }
-  });
-</script>
-
-<script>
-  const BASE_URL = "<?= BASE_URL ?>";
-</script>
 
 <script src="<?= BASE_URL ?>/assets/js/internamiento.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
