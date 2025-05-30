@@ -6,15 +6,73 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      background: #f2f2f2;
+      background: #e9ecef;
+      font-family: 'Roboto', sans-serif;
     }
     .estado-box {
       max-width: 900px;
       margin: 50px auto;
       background: #fff;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .estado-box h4 {
+      color: #343a40;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    .form-control {
       border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+    }
+    .btn-dark {
+      background-color: #343a40;
+      border-color: #343a40;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      padding: 10px 20px;
+      transition: background-color 0.3s ease;
+    }
+    .btn-dark:hover {
+      background-color: #23272b;
+    }
+    .badge-info {
+      background-color: #17a2b8;
+    }
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    table {
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+    th, td {
+      text-align: center;
+    }
+    th {
+      background-color: #f8f9fa;
+    }
+    .table-bordered {
+      border: 1px solid #ddd;
+    }
+    .table-responsive {
+      margin-top: 20px;
+    }
+    .mt-4 {
+      margin-top: 30px;
+    }
+    .card {
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+      background-color: #f8f9fa;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -85,12 +143,17 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
     }
 
     box.innerHTML = `
-      <p><strong>Cliente:</strong> ${data.cliente}</p>
-      <p><strong>Correlativo:</strong> ${data.correlativo}</p>
-      <p><strong>Fecha de ingreso:</strong> ${data.fecha}</p>
-      <p><strong>Estado:</strong> <span class="badge badge-info">${data.estado}</span></p>
-      <p><strong>Técnico asignado:</strong> ${data.tecnico}</p>
-      <p><strong>Observaciones:</strong> ${data.observaciones || 'Sin observaciones'}</p>
+      <div class="card">
+        <div class="card-header">Detalles del Cliente</div>
+        <div class="card-body">
+          <p><strong>Cliente:</strong> ${data.cliente}</p>
+          <p><strong>Correlativo:</strong> ${data.correlativo}</p>
+          <p><strong>Fecha de ingreso:</strong> ${data.fecha}</p>
+          <p><strong>Estado:</strong> <span class="badge badge-info">${data.estado}</span></p>
+          <p><strong>Técnico asignado:</strong> ${data.tecnico}</p>
+          <p><strong>Observaciones:</strong> ${data.observaciones || 'Sin observaciones'}</p>
+        </div>
+      </div>
       ${equiposHtml}
     `;
   } else {

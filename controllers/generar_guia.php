@@ -1,121 +1,130 @@
-<?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../libs/dompdf/autoload.inc.php';
-
-use Dompdf\Dompdf;
-
-if (!isset($_GET['id'])) {
-    die("ID no especificado.");
-}
-
-$internamiento_id = intval($_GET['id']);
-
-// Obtener internamiento y cliente
-$stmt = $pdo->prepare("SELECT 
-    i.*, 
-    c.tipo_doc, c.dni_ruc, c.nombres, c.apellidos, c.razon_social, c.telefono,
-    u.nombre AS tecnico_nombre, u.apellido AS tecnico_apellido
-FROM internamientos i
-JOIN clientes c ON c.id = i.cliente_id
-LEFT JOIN usuarios u ON u.id = i.tecnico_id
-WHERE i.id = ?");
-
-$stmt->execute([$internamiento_id]);
-$internamiento = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$internamiento) die("Internamiento no encontrado");
-
-// Obtener equipos
-$stmt2 = $pdo->prepare("SELECT * FROM equipos_internamiento WHERE internamiento_id = ?");
-$stmt2->execute([$internamiento_id]);
-$equipos = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-
-// Construir HTML
-ob_start();
-?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th,
-        td {
-            border: 1px solid #333;
-            padding: 5px;
-            text-align: left;
-        }
-
-        .info {
-            margin-bottom: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Consulta de Estado - Compu Gaming</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f4f7fc;
+      font-family: 'Roboto', sans-serif;
+      color: #333;
+    }
+    .estado-box {
+      max-width: 900px;
+      margin: 50px auto;
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    .estado-box h4 {
+      color: #495057;
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .form-control {
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .form-control:focus {
+      border-color: #17a2b8;
+      box-shadow: 0 0 5px rgba(23, 162, 184, 0.6);
+    }
+    .btn-dark {
+      background-color: #343a40;
+      border-color: #343a40;
+      font-size: 1.2rem;
+      padding: 12px 24px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+    .btn-dark:hover {
+      background-color: #23272b;
+    }
+    .badge-info {
+      background-color: #17a2b8;
+    }
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    table {
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      text-align: center;
+      padding: 12px;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+    .table-bordered {
+      border: 1px solid #ddd;
+    }
+    .table-responsive {
+      margin-top: 20px;
+    }
+    .card {
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    .card-body {
+      font-size: 1rem;
+    }
+    .mt-4 {
+      margin-top: 30px;
+    }
+  </style>
 </head>
-
 <body>
-    <table width="100%">
-        <tr>
-            <td width="65%">
-                <img src="file://<?= realpath(__DIR__ . '/../assets/img/logo_negro_rojo.png'); ?>" height="45">
-                <strong>COMPU GAMING STORE E.I.R.L.</strong><br>
-                <small>Dirección Fiscal: Jr. Grau N° 874, El Tambo - Huancayo - Junín</small><br>
-                <small>Sucursal: Av. Giráldez N° 274 Int. S-18 / S-07 - Huancayo</small><br>
-                <small>Whatsapp: 977457951 / 925428541 / 924143694</small><br>
-                <small>Correo: compugaming.store@gmail.com</small>
-            </td>
-            <td width="35%" align="right" style="border: 1px solid black; padding: 8px;">
-                <div><strong>R.U.C. 20604235694</strong></div>
-                <div><strong>GUÍA DE INTERNAMIENTO</strong></div>
-                <div><strong>N° <?= $internamiento['correlativo'] ?></strong></div>
-            </td>
-        </tr>
-    </table>
 
-    <hr>
+<div class="estado-box text-center">
+  <h4 class="mb-4">Consulta el estado de tu Equipo</h4>
+  <form id="formConsulta">
+    <div class="form-group">
+      <input type="text" name="codigo" class="form-control form-control-lg" placeholder="DNI o Correlativo" required>
+    </div>
+    <button type="submit" class="btn btn-dark btn-lg btn-block">Consultar</button>
+  </form>
+  <hr>
+  <div id="resultadoEstado" class="mt-4 text-left" style="display:none;"></div>
+</div>
 
-    <table width="100%" style="font-size: 12px; margin-top: 10px;">
-        <tr>
-            <td><strong>Cliente:</strong> <?= $internamiento['tipo_doc'] === 'DNI'
-                                                ? $internamiento['nombres'] . ' ' . $internamiento['apellidos']
-                                                : $internamiento['razon_social']; ?></td>
-        </tr>
-        <tr>
-            <td><strong>DNI/RUC:</strong> <?= $internamiento['dni_ruc'] ?></td>
+<script>
+document.getElementById('formConsulta').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const form = new FormData(this);
+  const res = await fetch('../../controllers/ConsultarEstadoController.php', {
+    method: 'POST',
+    body: form
+  });
+  const data = await res.json();
+  const box = document.getElementById('resultadoEstado');
+  box.style.display = 'block';
 
-        <tr>
-            <td><strong>Teléfono:</strong> <?= $internamiento['telefono'] ?></td>
-        </tr>
-        <tr>
-            <td><strong>Fecha Ingreso:</strong> <?= date('d/m/Y H:i', strtotime($internamiento['fecha_ingreso'])) ?></td>
-        </tr>
-        <tr>
-            <td><strong>Observaciones:</strong> <?= $internamiento['observaciones'] ?></td>
-        </tr>
-        <tr>
-            <td><strong>Técnico Asignado:</strong> <?= $internamiento['tecnico_nombre'] . ' ' . $internamiento['tecnico_apellido'] ?></td>
-        </tr>
-    </table>
-
-
-    <h4 style="margin-top: 15px;">Equipos Ingresados</h4>
-    <table width="100%" border="1" cellspacing="0" cellpadding="5" style="font-size: 11px;">
-        <thead>
-            <tr style="background-color: #f0f0f0;">
+  if (data.status === 'ok') {
+    let equiposHtml = '';
+    if (data.equipos.length > 0) {
+      equiposHtml += `
+        <h5>Equipos ingresados:</h5>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="thead-light">
+              <tr>
                 <th>#</th>
                 <th>Tipo</th>
                 <th>Marca</th>
@@ -123,52 +132,49 @@ ob_start();
                 <th>Serie</th>
                 <th>Falla</th>
                 <th>Servicio</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($equipos as $i => $eq): ?>
-                <tr>
-                    <td><?= $i + 1 ?></td>
-                    <td><?= $eq['tipo_equipo'] ?></td>
-                    <td><?= $eq['marca'] ?></td>
-                    <td><?= $eq['modelo'] ?></td>
-                    <td><?= $eq['nro_serie'] ?></td>
-                    <td><?= $eq['falla_reportada'] ?></td>
-                    <td><?= $eq['servicio_solicitado'] ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <?php
-    $total = 0;
-    foreach ($equipos as $eq) {
-        $total += floatval($eq['precio_aprox']);
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      data.equipos.forEach((e, i) => {
+        equiposHtml += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${e.tipo_equipo}</td>
+            <td>${e.marca}</td>
+            <td>${e.modelo || '-'}</td>
+            <td>${e.nro_serie || '-'}</td>
+            <td>${e.falla_reportada || '-'}</td>
+            <td>${e.servicio_solicitado || '-'}</td>
+          </tr>
+        `;
+      });
+      equiposHtml += `
+            </tbody>
+          </table>
+        </div>
+      `;
     }
-    ?>
 
-    <div class="bloque">
-        <h4>Resumen</h4>
-        <table>
-            <tr>
-                <td><strong>Total aproximado:</strong></td>
-                <td>S/ <?= number_format($total, 2) ?></td>
-            </tr>
-        </table>
-    </div>
+    box.innerHTML = `
+      <div class="card">
+        <div class="card-header">Detalles del Cliente</div>
+        <div class="card-body">
+          <p><strong>Cliente:</strong> ${data.cliente}</p>
+          <p><strong>Correlativo:</strong> ${data.correlativo}</p>
+          <p><strong>Fecha de ingreso:</strong> ${data.fecha}</p>
+          <p><strong>Estado:</strong> <span class="badge badge-info">${data.estado}</span></p>
+          <p><strong>Técnico asignado:</strong> ${data.tecnico}</p>
+          <p><strong>Observaciones:</strong> ${data.observaciones || 'Sin observaciones'}</p>
+        </div>
+      </div>
+      ${equiposHtml}
+    `;
+  } else {
+    box.innerHTML = `<div class="alert alert-danger">${data.mensaje}</div>`;
+  }
+});
+</script>
 
-    <div style="margin-top: 20px; text-align: left;">
-        <img src="file://<?= realpath(__DIR__ . '/../assets/img/qr_internamiento.png'); ?>" width="90">
-        <div style="font-size: 10px;">Código QR para seguimiento</div>
-    </div>
 </body>
-
 </html>
-<?php
-$html = ob_get_clean();
-
-// Generar PDF
-$dompdf = new Dompdf();
-$dompdf->loadHtml($html);
-$dompdf->setPaper('A4', 'portrait');
-$dompdf->render();
-$dompdf->stream("guia_internamiento_{$internamiento['correlativo']}.pdf", ["Attachment" => false]);
