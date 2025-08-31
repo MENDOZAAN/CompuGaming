@@ -1,0 +1,19 @@
+.modal-xl {
+    max-width: 70% !important;
+  }
+
+  .modal-body .form-group,
+  .modal-body .form-row {
+    margin-bottom: 1rem;
+  }
+
+  .btn-dark i,
+  .btn-primary i {
+    margin-right: 6px;
+  }
+
+  select.form-control,
+  input.form-control,
+  textarea.form-control {
+    border-radius: 0.35rem;
+  }

@@ -1,7 +1,7 @@
 Array
 (
     [id] => 4
-    [nombre] => Nico 
+    [nombre] => Nico Lizandro
     [apellido] => Mendoza
     [nombre_usuario] => admin
     [rol] => Admin

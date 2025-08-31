@@ -78,4 +78,11 @@ class ClienteModel
             ':id' => $datos['id'],
         ]);
     }
+    public static function buscarPorDniRuc($dni_ruc)
+    {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM clientes WHERE dni_ruc = ?");
+        $stmt->execute([$dni_ruc]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
